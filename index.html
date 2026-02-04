@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tanmiah – Hatching Eggs Dispatch Record</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous"
+    />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at top left, #bbf7d0 0, #dcfce7 40%, #ffffff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: #0f172a;
+        }
+
+        .glass-card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            overflow: hidden;
+            animation: cardIn 0.7s ease-out;
+        }
+
+        .header-bar {
+            background: linear-gradient(120deg, #22c55e, #bbf7d0);
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.18));
+        }
+
+        .title-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-main {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: #022c22;
+            text-transform: uppercase;
+        }
+
+        .title-sub {
+            font-size: 0.78rem;
+            color: #047857;
+        }
+
+        .card-body-custom {
+            padding: 22px;
+            color: #111827;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #047857;
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .form-control,
+        .form-control:focus {
+            background-color: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: #111827;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        textarea.form-control {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #022c22;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 12px 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 12px 26px rgba(34, 197, 94, 0.4);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+        .btn-submit[disabled] {
+            opacity: 0.7;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .btn-submit:hover:not([disabled]) {
+            transform: translateY(-1px);
+            box-shadow: 0 18px 38px rgba(34, 197, 94, 0.45);
+            filter: brightness(1.05);
+        }
+
+        .btn-submit:active:not([disabled]) {
+            transform: translateY(1px);
+            box-shadow: 0 8px 18px rgba(22, 163, 74, 0.5);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            border: 2px solid rgba(6, 78, 59, 0.2);
+            border-top-color: #064e3b;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        .btn-submit.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-submit.loading .btn-text {
+            opacity: 0.9;
+        }
+
+        .status {
+            font-size: 0.75rem;
+            min-height: 18px;
+            color: #6b7280;
+        }
+
+        .status.success {
+            color: #6ee7b7;
+        }
+
+        .status.error {
+            color: #b91c1c;
+        }
+
+        .footer-note {
+            margin-top: 4px;
+            font-size: 0.72rem;
+            color: #6b7280;
+            text-align: right;
+        }
+
+        .footer-note strong {
+            color: #065f46;
+        }
+
+        .custom-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .custom-modal {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 18px 20px;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.45);
+            text-align: center;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+        }
+
+        .custom-modal h2 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+            color: #16a34a;
+        }
+
+        .custom-modal p {
+            font-size: 0.8rem;
+            color: #4b5563;
+            margin-bottom: 12px;
+        }
+
+        .custom-modal button {
+            border: none;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #022c22;
+            padding: 7px 18px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+        <div class="wrapper">
+            <div class="glass-card">
+                <div class="header-bar">
+                    <div class="brand-left">
+                        <!-- Logo: make sure tanmiah.png is in the same folder as this HTML file -->
+                        <img src="tanmiah.png" alt="Tanmiah Logo" class="logo" />
+                        <div class="title-text">
+                            <span class="title-main">Hatching Eggs Dispatch Record Form</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body-custom">
+                    <div class="section-title">Farm & Dispatch Details</div>
+
+                    <form id="farmForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="farmNumber" class="form-label">
+                                    Farm Number <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="farmNumber" name="farmNumber" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="farmName" class="form-label">
+                                    Farm Name <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="farmName" name="farmName" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="flockAge" class="form-label">
+                                    Flock Age (days) <span class="required">*</span>
+                                </label>
+                                <input type="number" class="form-control" id="flockAge" name="flockAge" min="0" step="1" placeholder="e.g. 45" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="batchNumber" class="form-label">
+                                    Batch Number <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="batchNumber" name="batchNumber" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="dispatchDate" class="form-label">
+                                    Dispatch Date <span class="required">*</span>
+                                </label>
+                                <input type="date" class="form-control" id="dispatchDate" name="dispatchDate" required />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="hatchingEggsSold" class="form-label">
+                                    Hatching Eggs Sold <span class="required">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="hatchingEggsSold"
+                                    name="hatchingEggsSold"
+                                    min="0"
+                                    step="1"
+                                    required
+                                />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="supplierName" class="form-label">
+                                    Supplier Name <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="supplierName" name="supplierName" required />
+                            </div>
+
+                            <div class="col-12">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <textarea
+                                    class="form-control"
+                                    id="remarks"
+                                    name="remarks"
+                                    placeholder="Optional notes or comments..."
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-center mt-4 gap-1">
+                            <button type="submit" class="btn-submit">
+                                <span class="spinner" aria-hidden="true"></span>
+                                <span class="btn-text">Save Record</span>
+                            </button>
+                            <div id="status" class="status w-100 text-center"></div>
+                            <p class="footer-note w-100">
+                                Form created by <strong>Syed Sami</strong>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="custom-modal-backdrop">
+        <div class="custom-modal">
+            <h2>Saved Successfully</h2>
+            <p>Your entry has been saved.</p>
+            <button type="button" id="closeModalBtn">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("farmForm");
+        const statusEl = document.getElementById("status");
+        const submitBtn = document.querySelector(".btn-submit");
+        const modalBackdrop = document.getElementById("successModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        // TODO: Replace this with your deployed Apps Script Web App URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYgdnVypfsPTvzEcVoGtxSOeIXsoXcpG1v6NgFyzi9tV_WUOZ0z-thpp4INVXV0humfg/exec";
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            statusEl.textContent = "";
+            statusEl.className = "status";
+
+            // Front-end simple validation (HTML5 required already handles most)
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            if (!SCRIPT_URL || SCRIPT_URL.startsWith("PASTE_")) {
+                statusEl.textContent =
+                    "Apps Script URL missing. Please paste your Web App URL in SCRIPT_URL variable in this file.";
+                statusEl.classList.add("error");
+                return;
+            }
+
+            const formData = new FormData(form);
+
+            try {
+                statusEl.textContent = "Saving...";
+                submitBtn.disabled = true;
+                submitBtn.classList.add("loading");
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: formData,
+                    mode: "no-cors",
+                });
+
+                // no-cors: assume success if no network error
+                statusEl.textContent = "Saved successfully.";
+                statusEl.classList.add("success");
+                form.reset();
+                // show popup
+                modalBackdrop.style.display = "flex";
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent =
+                    "Error saving data. Please check your internet and Apps Script deployment.";
+                statusEl.classList.add("error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove("loading");
+            }
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            modalBackdrop.style.display = "none";
+        });
+
+        modalBackdrop.addEventListener("click", (e) => {
+            if (e.target === modalBackdrop) {
+                modalBackdrop.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
+
+
